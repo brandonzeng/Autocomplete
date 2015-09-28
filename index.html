@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JavaScript Autocomplete</title>
+  <link rel="stylesheet" href="src/index.css" type="text/css" charset="utf-8">
+</head>
+
+<body>
+
+  <input id="search-term-input" type="text" placeholder="Type something...">
+  <ul id="results-list"></ul>
+
+  <script src="src/words.js" charset="utf-8"></script>
+  <script src="src/controller.js" charset="utf-8"></script>
+  <script src="src/trie.js" charset="utf-8"></script>
+  <script>
+
+  	document.addEventListener('DOMContentLoaded', function () {
+  		// Creates the trie for storing words
+  		var wordTrie = Trie();
+
+  		// Adds the words to the trie, removing case sensitivity
+  		WORDS.forEach(function(word) {
+  			wordTrie.insert(word.toLowerCase());
+  		})
+
+	
+	  CONTROLLER.registerAutocompleteListener(function (word) {
+	  	var NUM_WORDS_TO_SHOW = 10;
+	  	var i;
+
+	  	// Clear results every time the input text changes
+	  	CONTROLLER.clearSearchResults();
+
+	  	// Identifies the matching words using the autocomplete function and sorts them
+	  	var PREFIX_WORDS = wordTrie.autoComplete(word.toLowerCase()).sort();
+
+	  	// Displays the top search results from autoComplete
+	  	for (i = 0; i < NUM_WORDS_TO_SHOW; ++i) {
+	  	  var word = PREFIX_WORDS[i];
+	  	  // If a word doesn't match the prefix, it isn't displayed
+	  	  if (typeof word !== 'undefined') {
+	  	  	CONTROLLER.appendToSearchResults(word);
+	  	  }
+	  	}
+	  	
+      });
+
+  	});
+
+  </script>
+</body>
+</html>
